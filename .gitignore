@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Training artifacts
+token_shards/
+semvec_shards/
+*.pt
+checkpoint.pt
+best_model.pt
+final_model.pt
+checkpoint_semantic.pt
+best_model_semantic.pt
+
+# Large files
+*.semvec
+shard_*.pt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+training_log.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated docs
+docs/build/
+docs/source/_build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Hugging Face cache
+.huggingface/
+~/.cache/huggingface/
+input.txt
