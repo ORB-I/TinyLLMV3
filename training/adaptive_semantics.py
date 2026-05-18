@@ -175,10 +175,10 @@ def regulate_semantics(model, quality_metrics: dict) -> list:
     if quality_metrics["collapse"]:
         if quality_metrics["is_mathematical"]:
             decay = SEMANTIC_DECAY * 0.95
-            print(f"\n⚠️ Mathematical code - gentle regulation")
+            print("Mathematical code - gentle regulation")
         else:
             decay = SEMANTIC_DECAY
-            print(f"\n⚠️ Semantic saturation detected")
+            print("Semantic saturation detected")
 
         print(f"   Reasons: {quality_metrics['reasons']}")
         print(f"   Is mathematical: {quality_metrics['is_mathematical']}")

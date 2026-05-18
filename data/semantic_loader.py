@@ -23,7 +23,7 @@ def load_semantic_vectors(semvec_dir, vocab_size, semantic_dim, device):
         print("\n📚 No semantic vectors found.")
         return None
 
-    print("\n📚 Loading semantic vectors...")
+    print("\nLoading semantic vectors...")
 
     with open(index_path, "r") as f:
         semvec_index = json.load(f)

@@ -72,7 +72,7 @@ def main() -> None:
     global tokenizer, model
 
     print("\n" + "=" * 60)
-    print("🧟 TinyLLM - Chat Interface")
+    print(" TinyLLM - Chat Interface")
     print("=" * 60)
 
     # Load tokenizer
@@ -83,7 +83,7 @@ def main() -> None:
     use_semantics = USE_SEMANTICS
 
     if use_semantics:
-        print("\n📚 Loading semantic vectors...")
+        print("\n Loading semantic vectors...")
         semantic_tensor = load_semantic_vectors(
             "semvec_shards", VOCAB_SIZE, SEMANTIC_DIM, DEVICE
         )
@@ -94,7 +94,7 @@ def main() -> None:
             print(f"   ✓ Loaded {semantic_tensor.shape[0]:,} semantic vectors")
 
     # Load model
-    print("\n🧠 Loading model...")
+    print("\n Loading model...")
     model = TinyLLMSemantic(vocab_size=VOCAB_SIZE, use_semantics=use_semantics).to(
         DEVICE
     )
@@ -117,7 +117,7 @@ def main() -> None:
 
     # Chat loop
     print("\n" + "=" * 60)
-    print("💬 Ready to chat! Type your messages below.")
+    print("Ready to chat! Type your messages below.")
     print("   Commands:")
     print("     /temp [0.5-1.5]  - Adjust temperature (creativity)")
     print("     /max [N]         - Adjust max response length")
@@ -140,7 +140,7 @@ def main() -> None:
 
             # Handle commands
             if user_input.lower() == "/quit":
-                print("\n👋 Goodbye! The creature rests.")
+                print("\nGoodbye! The creature rests.")
                 break
 
             elif user_input.lower() == "/reset":
@@ -181,7 +181,7 @@ def main() -> None:
 
             elif user_input.lower() == "/gates" and use_semantics:
                 gates = model.get_gates()
-                print("\n📊 Per-layer semantic gates:")
+                print("\nPer-layer semantic gates:")
                 for i, g in enumerate(gates):
                     bar = "█" * int(g * 20) + "░" * (20 - int(g * 20))
                     print(f"   Layer {i}: {bar} {g:.3f}")
@@ -203,7 +203,7 @@ def main() -> None:
                 )
 
         except KeyboardInterrupt:
-            print("\n\n👋 Goodbye! The creature rests.")
+            print("\nGoodbye! The creature rests.")
             break
         except Exception as e:
             print(f"\n\033[31mError: {e}\033[0m")

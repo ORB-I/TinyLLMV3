@@ -78,7 +78,7 @@ def main() -> None:
         model.set_semantic_tensor(semantic_tensor)
 
     total_params = sum(p.numel() for p in model.parameters())
-    print(f"\n🧠 Model parameters: {total_params:,}")
+    print(f"\n Model parameters: {total_params:,}")
     if use_semantics:
         print(f"   Per-layer semantic gates (learnable):")
         print(f"      Layer 0: ████████░░░░░░░░░░░░ 0.30 (initial)")
@@ -97,7 +97,7 @@ def main() -> None:
     )
 
     # Training loop
-    print("\n🚀 Starting training...\n")
+    print("\n Starting training...\n")
 
     for step in range(start_step, MAX_ITERS):
         # Random shard rotation
@@ -184,7 +184,7 @@ def main() -> None:
 
             # Show gate summary
             if use_semantics:
-                print(f"📊 Per-layer gates:\n{get_gate_summary(model)}")
+                print(f" Per-layer gates:\n{get_gate_summary(model)}")
 
             # Adaptive semantics
             if ENABLE_ADAPTIVE_SEMANTICS and use_semantics:

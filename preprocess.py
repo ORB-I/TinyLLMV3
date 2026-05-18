@@ -69,7 +69,7 @@ def create_token_shards() -> None:
         print(f"\nFound {len(existing)} existing token shards")
         return
 
-    print("\n🔠 Creating token shards...")
+    print("\nCreating token shards...")
     tokenizer = get_tokenizer()
 
     shard_index = 0
@@ -99,7 +99,7 @@ def create_token_shards() -> None:
         torch.save(torch.tensor(current_tokens, dtype=torch.int32), shard_path)
         print(f"   Saved final shard {shard_index} ({len(current_tokens):,} tokens)")
 
-    print(f"\n✅ Created {shard_index + 1} token shards")
+    print(f"\nCreated {shard_index + 1} token shards")
 
 
 def create_semantic_vectors(
@@ -125,7 +125,7 @@ def create_semantic_vectors(
         print(f"\nFound {len(existing)} existing semantic shards")
         return
 
-    print("\n🧠 Creating semantic vectors...")
+    print("\nCreating semantic vectors...")
 
     # Load tokenizers
     gpt2_tokenizer = get_tokenizer()
@@ -229,7 +229,7 @@ def create_semantic_vectors(
     with open(SEMVEC_SHARDS_DIR / "index.json", "w") as f:
         json.dump(index, f, indent=2)
 
-    print(f"\n✅ Created semantic vector shards")
+    print(f"\nCreated semantic vector shards")
     print(f"   Total unique tokens: {len(unique_tokens):,}")
     print(f"   Total shards: {index['num_shards']}")
 
@@ -248,7 +248,7 @@ def main() -> None:
     # device = "cuda" if torch.cuda.is_available() else "cpu"
     # create_semantic_vectors(device=device)
 
-    print("\n✅ Preprocessing complete!")
+    print("Preprocessing complete!")
     print("\nNext step: python train.py")
 
 

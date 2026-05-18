@@ -25,8 +25,8 @@ def main():
     # This will take ~10-20 minutes on CPU, ~5-10 on GPU
     create_semantic_vectors(device=device, max_tokens_per_shard=5000)
 
-    print("\n✅ Semantic vectors generated!")
-    print("   Ready for training with: python train.py")
+    print("\nSemantic vectors generated!")
+    print("   Ready for training with")
 
 
 if __name__ == "__main__":
