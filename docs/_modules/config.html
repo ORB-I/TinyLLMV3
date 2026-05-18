@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config &mdash; TinyLLM 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            TinyLLM
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TinyLLM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">config</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Configuration for TinyLLM</span>
+
+<span class="sd">This module contains all hyperparameters and configuration settings for the TinyLLM</span>
+<span class="sd">training pipeline, including model architecture, training parameters, semantic</span>
+<span class="sd">augmentation settings, and device configuration.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># MODEL ARCHITECTURE</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="sd">&quot;&quot;&quot;Number of sequences processed in parallel during training.&quot;&quot;&quot;</span>
+
+<span class="n">BLOCK_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="sd">&quot;&quot;&quot;Maximum context length (number of tokens the model can attend to).&quot;&quot;&quot;</span>
+
+<span class="n">EMBED_DIM</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="sd">&quot;&quot;&quot;Dimensionality of token embeddings.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_DIM</span> <span class="o">=</span> <span class="mi">384</span>
+<span class="sd">&quot;&quot;&quot;Dimensionality of semantic vectors from MiniLM.&quot;&quot;&quot;</span>
+
+<span class="n">NUM_LAYERS</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="sd">&quot;&quot;&quot;Number of transformer encoder layers.&quot;&quot;&quot;</span>
+
+<span class="n">NUM_HEADS</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="sd">&quot;&quot;&quot;Number of attention heads per transformer layer.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># TRAINING</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">3e-4</span>
+<span class="sd">&quot;&quot;&quot;Initial learning rate for AdamW optimizer.&quot;&quot;&quot;</span>
+
+<span class="n">MIN_LR</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="sd">&quot;&quot;&quot;Minimum learning rate after cosine decay.&quot;&quot;&quot;</span>
+
+<span class="n">MAX_ITERS</span> <span class="o">=</span> <span class="mi">50000</span>
+<span class="sd">&quot;&quot;&quot;Total number of training iterations.&quot;&quot;&quot;</span>
+
+<span class="n">WARMUP_STEPS</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="sd">&quot;&quot;&quot;Number of linear warmup steps before cosine decay.&quot;&quot;&quot;</span>
+
+<span class="n">GRADIENT_CLIP</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="sd">&quot;&quot;&quot;Maximum norm for gradient clipping.&quot;&quot;&quot;</span>
+
+<span class="n">WEIGHT_DECAY</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="sd">&quot;&quot;&quot;Weight decay coefficient for AdamW optimizer.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># SEMANTIC AUGMENTATION</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">USE_SEMANTICS</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="sd">&quot;&quot;&quot;Enable or disable semantic vector augmentation.&quot;&quot;&quot;</span>
+
+<span class="n">SEM_GATE_INIT</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="sd">&quot;&quot;&quot;Initial value for the learnable semantic gate.&quot;&quot;&quot;</span>
+
+<span class="n">SEM_GATE_MAX</span> <span class="o">=</span> <span class="mf">0.85</span>
+<span class="sd">&quot;&quot;&quot;Maximum allowed semantic gate value.&quot;&quot;&quot;</span>
+
+<span class="n">SEM_GATE_MIN</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="sd">&quot;&quot;&quot;Minimum allowed semantic gate value.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_DROPOUT</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="sd">&quot;&quot;&quot;Dropout rate for semantic vectors during training.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># CONTEXT BLENDING (Stage 1)</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">SEM_CURRENT</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="sd">&quot;&quot;&quot;Weight for current token&#39;s semantic vector in context blending.&quot;&quot;&quot;</span>
+
+<span class="n">SEM_PREV</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="sd">&quot;&quot;&quot;Weight for previous token&#39;s semantic vector in context blending.&quot;&quot;&quot;</span>
+
+<span class="n">SEM_NEXT</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="sd">&quot;&quot;&quot;Weight for next token&#39;s semantic vector in context blending.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># ADAPTIVE SEMANTICS (Stage 3)</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">ENABLE_ADAPTIVE_SEMANTICS</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="sd">&quot;&quot;&quot;Enable automatic semantic gate adjustment based on output quality.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_UNIQUE_RATIO</span> <span class="o">=</span> <span class="mf">0.30</span>
+<span class="sd">&quot;&quot;&quot;Minimum unique token ratio before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_REPEAT_RATIO</span> <span class="o">=</span> <span class="mf">0.45</span>
+<span class="sd">&quot;&quot;&quot;Maximum repetition ratio before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_MIN_LENGTH</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="sd">&quot;&quot;&quot;Minimum token count before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_DECAY</span> <span class="o">=</span> <span class="mf">0.92</span>
+<span class="sd">&quot;&quot;&quot;Multiplier for gate reduction during semantic collapse.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_RECOVERY</span> <span class="o">=</span> <span class="mf">1.01</span>
+<span class="sd">&quot;&quot;&quot;Multiplier for gate increase during healthy output.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># DATA</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">SHARD_SIZE</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<span class="sd">&quot;&quot;&quot;Number of tokens per shard file.&quot;&quot;&quot;</span>
+
+<span class="n">INPUT_FILE</span> <span class="o">=</span> <span class="s2">&quot;input.txt&quot;</span>
+<span class="sd">&quot;&quot;&quot;Path to the input text file for training.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># CHECKPOINTS</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">EVAL_INTERVAL</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="sd">&quot;&quot;&quot;Number of steps between evaluation runs.&quot;&quot;&quot;</span>
+
+<span class="n">SAVE_EVERY</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="sd">&quot;&quot;&quot;Number of steps between checkpoint saves.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># GENERATION</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">GEN_TEMPERATURE</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="sd">&quot;&quot;&quot;Default sampling temperature for text generation.&quot;&quot;&quot;</span>
+
+<span class="n">GEN_TOP_K</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="sd">&quot;&quot;&quot;Default top-k sampling parameter for generation.&quot;&quot;&quot;</span>
+
+<span class="n">GEN_MAX_NEW</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="sd">&quot;&quot;&quot;Default maximum number of new tokens to generate.&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># DEVICE</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="sd">&quot;&quot;&quot;Computation device (&#39;cuda&#39; or &#39;cpu&#39;).&quot;&quot;&quot;</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># VOCAB_SIZE (set after tokenizer loads)</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">VOCAB_SIZE</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot;Vocabulary size from GPT-2 tokenizer. Set dynamically at runtime.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="set_vocab_size">
+<a class="viewcode-back" href="../modules.html#config.set_vocab_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_vocab_size</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the vocabulary size after tokenizer initialization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size: The vocabulary size from the tokenizer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">VOCAB_SIZE</span>
+    <span class="n">VOCAB_SIZE</span> <span class="o">=</span> <span class="n">size</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Corpse Of The Betrayed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

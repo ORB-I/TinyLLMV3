@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to TinyLLM’s documentation! &mdash; TinyLLM 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            TinyLLM
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">TinyLLM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to TinyLLM’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-tinyllm-s-documentation">
+<h1>Welcome to TinyLLM’s documentation!<a class="headerlink" href="#welcome-to-tinyllm-s-documentation" title="Link to this heading"></a></h1>
+<p>TinyLLM is a lightweight, semantic-augmented language model trained from scratch
+on a Quadro K620. It features:</p>
+<ul class="simple">
+<li><p>Subword/BPE via GPT-2 tokenization and semantic-augmented training</p></li>
+<li><p>Learnable per-layer gates for semantic influence</p></li>
+<li><p>Adaptive regulation with arithmetic compensation</p></li>
+<li><p>Sharded data loading for large datasets</p></li>
+<li><p>Context blending for local coherence</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.BATCH_SIZE"><code class="docutils literal notranslate"><span class="pre">BATCH_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.BLOCK_SIZE"><code class="docutils literal notranslate"><span class="pre">BLOCK_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.COLLAPSE_MIN_LENGTH"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_MIN_LENGTH</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.COLLAPSE_REPEAT_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_REPEAT_RATIO</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.COLLAPSE_UNIQUE_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_UNIQUE_RATIO</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.DEVICE"><code class="docutils literal notranslate"><span class="pre">DEVICE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.EMBED_DIM"><code class="docutils literal notranslate"><span class="pre">EMBED_DIM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.ENABLE_ADAPTIVE_SEMANTICS"><code class="docutils literal notranslate"><span class="pre">ENABLE_ADAPTIVE_SEMANTICS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.EVAL_INTERVAL"><code class="docutils literal notranslate"><span class="pre">EVAL_INTERVAL</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.GEN_MAX_NEW"><code class="docutils literal notranslate"><span class="pre">GEN_MAX_NEW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.GEN_TEMPERATURE"><code class="docutils literal notranslate"><span class="pre">GEN_TEMPERATURE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.GEN_TOP_K"><code class="docutils literal notranslate"><span class="pre">GEN_TOP_K</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.GRADIENT_CLIP"><code class="docutils literal notranslate"><span class="pre">GRADIENT_CLIP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.INPUT_FILE"><code class="docutils literal notranslate"><span class="pre">INPUT_FILE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.LEARNING_RATE"><code class="docutils literal notranslate"><span class="pre">LEARNING_RATE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.MAX_ITERS"><code class="docutils literal notranslate"><span class="pre">MAX_ITERS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.MIN_LR"><code class="docutils literal notranslate"><span class="pre">MIN_LR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.NUM_HEADS"><code class="docutils literal notranslate"><span class="pre">NUM_HEADS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.NUM_LAYERS"><code class="docutils literal notranslate"><span class="pre">NUM_LAYERS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SAVE_EVERY"><code class="docutils literal notranslate"><span class="pre">SAVE_EVERY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEMANTIC_DECAY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DECAY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEMANTIC_DIM"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DIM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEMANTIC_DROPOUT"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DROPOUT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEMANTIC_RECOVERY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_RECOVERY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_CURRENT"><code class="docutils literal notranslate"><span class="pre">SEM_CURRENT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_GATE_INIT"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_INIT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_GATE_MAX"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_MAX</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_GATE_MIN"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_MIN</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_NEXT"><code class="docutils literal notranslate"><span class="pre">SEM_NEXT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SEM_PREV"><code class="docutils literal notranslate"><span class="pre">SEM_PREV</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.SHARD_SIZE"><code class="docutils literal notranslate"><span class="pre">SHARD_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.USE_SEMANTICS"><code class="docutils literal notranslate"><span class="pre">USE_SEMANTICS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.VOCAB_SIZE"><code class="docutils literal notranslate"><span class="pre">VOCAB_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.WARMUP_STEPS"><code class="docutils literal notranslate"><span class="pre">WARMUP_STEPS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.WEIGHT_DECAY"><code class="docutils literal notranslate"><span class="pre">WEIGHT_DECAY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#config.set_vocab_size"><code class="docutils literal notranslate"><span class="pre">set_vocab_size()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-models.tinyllm_semantic">models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-training.adaptive_semantics">training package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-data.shard_loader">data package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-generation.sampler">generation package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-train">Scripts</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Corpse Of The Betrayed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

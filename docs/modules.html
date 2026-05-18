@@ -1,0 +1,1382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; TinyLLM 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to TinyLLM’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TinyLLM
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#config.BATCH_SIZE"><code class="docutils literal notranslate"><span class="pre">BATCH_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.BLOCK_SIZE"><code class="docutils literal notranslate"><span class="pre">BLOCK_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.COLLAPSE_MIN_LENGTH"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_MIN_LENGTH</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.COLLAPSE_REPEAT_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_REPEAT_RATIO</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.COLLAPSE_UNIQUE_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_UNIQUE_RATIO</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.DEVICE"><code class="docutils literal notranslate"><span class="pre">DEVICE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.EMBED_DIM"><code class="docutils literal notranslate"><span class="pre">EMBED_DIM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.ENABLE_ADAPTIVE_SEMANTICS"><code class="docutils literal notranslate"><span class="pre">ENABLE_ADAPTIVE_SEMANTICS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.EVAL_INTERVAL"><code class="docutils literal notranslate"><span class="pre">EVAL_INTERVAL</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.GEN_MAX_NEW"><code class="docutils literal notranslate"><span class="pre">GEN_MAX_NEW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.GEN_TEMPERATURE"><code class="docutils literal notranslate"><span class="pre">GEN_TEMPERATURE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.GEN_TOP_K"><code class="docutils literal notranslate"><span class="pre">GEN_TOP_K</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.GRADIENT_CLIP"><code class="docutils literal notranslate"><span class="pre">GRADIENT_CLIP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.INPUT_FILE"><code class="docutils literal notranslate"><span class="pre">INPUT_FILE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.LEARNING_RATE"><code class="docutils literal notranslate"><span class="pre">LEARNING_RATE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.MAX_ITERS"><code class="docutils literal notranslate"><span class="pre">MAX_ITERS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.MIN_LR"><code class="docutils literal notranslate"><span class="pre">MIN_LR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.NUM_HEADS"><code class="docutils literal notranslate"><span class="pre">NUM_HEADS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.NUM_LAYERS"><code class="docutils literal notranslate"><span class="pre">NUM_LAYERS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SAVE_EVERY"><code class="docutils literal notranslate"><span class="pre">SAVE_EVERY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEMANTIC_DECAY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DECAY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEMANTIC_DIM"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DIM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEMANTIC_DROPOUT"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DROPOUT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEMANTIC_RECOVERY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_RECOVERY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_CURRENT"><code class="docutils literal notranslate"><span class="pre">SEM_CURRENT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_GATE_INIT"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_INIT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_GATE_MAX"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_MAX</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_GATE_MIN"><code class="docutils literal notranslate"><span class="pre">SEM_GATE_MIN</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_NEXT"><code class="docutils literal notranslate"><span class="pre">SEM_NEXT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SEM_PREV"><code class="docutils literal notranslate"><span class="pre">SEM_PREV</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.SHARD_SIZE"><code class="docutils literal notranslate"><span class="pre">SHARD_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.USE_SEMANTICS"><code class="docutils literal notranslate"><span class="pre">USE_SEMANTICS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.VOCAB_SIZE"><code class="docutils literal notranslate"><span class="pre">VOCAB_SIZE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.WARMUP_STEPS"><code class="docutils literal notranslate"><span class="pre">WARMUP_STEPS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.WEIGHT_DECAY"><code class="docutils literal notranslate"><span class="pre">WEIGHT_DECAY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config.set_vocab_size"><code class="docutils literal notranslate"><span class="pre">set_vocab_size()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-models.tinyllm_semantic">models package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.vocab_size"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.vocab_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.use_semantics"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.use_semantics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.block_size"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.block_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.token_emb"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.token_emb</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.pos_emb"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.pos_emb</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_proj"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.semantic_proj</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_gates"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.semantic_gates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.blocks"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.blocks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.norm"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.norm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.head"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.head</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_tensor"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.semantic_tensor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.__init__"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.blend_context_semantics"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.blend_context_semantics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.forward"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.generate"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.get_gates"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.get_gates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_dropout"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.semantic_dropout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.set_gate"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.set_gate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.tinyllm_semantic.TinyLLMSemantic.set_semantic_tensor"><code class="docutils literal notranslate"><span class="pre">TinyLLMSemantic.set_semantic_tensor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.num_layers"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.num_layers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.raw_gates"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.raw_gates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.__init__"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.forward"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.get_all_gates"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.get_all_gates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.get_gate"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.get_gate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.set_all_gates"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.set_all_gates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate.set_gate"><code class="docutils literal notranslate"><span class="pre">PerLayerSemanticGate.set_gate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.semantic_gate.SemanticGate"><code class="docutils literal notranslate"><span class="pre">SemanticGate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.SemanticGate.raw"><code class="docutils literal notranslate"><span class="pre">SemanticGate.raw</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.SemanticGate.__init__"><code class="docutils literal notranslate"><span class="pre">SemanticGate.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.SemanticGate.forward"><code class="docutils literal notranslate"><span class="pre">SemanticGate.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.SemanticGate.set_value"><code class="docutils literal notranslate"><span class="pre">SemanticGate.set_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.semantic_gate.SemanticGate.value"><code class="docutils literal notranslate"><span class="pre">SemanticGate.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.transformer.CausalMask"><code class="docutils literal notranslate"><span class="pre">CausalMask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.transformer.CausalMask.create"><code class="docutils literal notranslate"><span class="pre">CausalMask.create()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.transformer.PositionalEmbedding"><code class="docutils literal notranslate"><span class="pre">PositionalEmbedding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.transformer.PositionalEmbedding.forward"><code class="docutils literal notranslate"><span class="pre">PositionalEmbedding.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.transformer.TransformerBlock"><code class="docutils literal notranslate"><span class="pre">TransformerBlock</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.transformer.TransformerBlock.forward"><code class="docutils literal notranslate"><span class="pre">TransformerBlock.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-training.adaptive_semantics">training package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.ARITHMETIC_TOLERANCE_MULTIPLIER"><code class="docutils literal notranslate"><span class="pre">ARITHMETIC_TOLERANCE_MULTIPLIER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.COLLAPSE_MIN_LENGTH"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_MIN_LENGTH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.COLLAPSE_REPEAT_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_REPEAT_RATIO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.COLLAPSE_UNIQUE_RATIO"><code class="docutils literal notranslate"><span class="pre">COLLAPSE_UNIQUE_RATIO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.MAX_GATE"><code class="docutils literal notranslate"><span class="pre">MAX_GATE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.MIN_GATE"><code class="docutils literal notranslate"><span class="pre">MIN_GATE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.SEMANTIC_DECAY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DECAY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.SEMANTIC_RECOVERY"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_RECOVERY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.analyze_output_quality"><code class="docutils literal notranslate"><span class="pre">analyze_output_quality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.get_gate_summary"><code class="docutils literal notranslate"><span class="pre">get_gate_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.is_mathematical_code"><code class="docutils literal notranslate"><span class="pre">is_mathematical_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.adaptive_semantics.regulate_semantics"><code class="docutils literal notranslate"><span class="pre">regulate_semantics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.checkpoint.load_checkpoint"><code class="docutils literal notranslate"><span class="pre">load_checkpoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.checkpoint.save_checkpoint"><code class="docutils literal notranslate"><span class="pre">save_checkpoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training.scheduler.get_lr"><code class="docutils literal notranslate"><span class="pre">get_lr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-data.shard_loader">data package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data.shard_loader.ShardDataset"><code class="docutils literal notranslate"><span class="pre">ShardDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.shards"><code class="docutils literal notranslate"><span class="pre">ShardDataset.shards</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.block_size"><code class="docutils literal notranslate"><span class="pre">ShardDataset.block_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.current_shard_idx"><code class="docutils literal notranslate"><span class="pre">ShardDataset.current_shard_idx</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.tokens"><code class="docutils literal notranslate"><span class="pre">ShardDataset.tokens</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.__init__"><code class="docutils literal notranslate"><span class="pre">ShardDataset.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.get_batch"><code class="docutils literal notranslate"><span class="pre">ShardDataset.get_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data.shard_loader.ShardDataset.load_random_shard"><code class="docutils literal notranslate"><span class="pre">ShardDataset.load_random_shard()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#data.semantic_loader.load_semantic_vectors"><code class="docutils literal notranslate"><span class="pre">load_semantic_vectors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data.tokenizer_utils.get_tokenizer"><code class="docutils literal notranslate"><span class="pre">get_tokenizer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-generation.sampler">generation package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generation.sampler.generate"><code class="docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generation.sampler.sample_top_k"><code class="docutils literal notranslate"><span class="pre">sample_top_k()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-train">Scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#train.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.SEMANTIC_DIM"><code class="docutils literal notranslate"><span class="pre">SEMANTIC_DIM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.SEMVEC_SHARDS_DIR"><code class="docutils literal notranslate"><span class="pre">SEMVEC_SHARDS_DIR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.TOKEN_SHARDS_DIR"><code class="docutils literal notranslate"><span class="pre">TOKEN_SHARDS_DIR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.clean_text"><code class="docutils literal notranslate"><span class="pre">clean_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.create_semantic_vectors"><code class="docutils literal notranslate"><span class="pre">create_semantic_vectors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.create_token_shards"><code class="docutils literal notranslate"><span class="pre">create_token_shards()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chat.MODEL_PATH"><code class="docutils literal notranslate"><span class="pre">MODEL_PATH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chat.USE_SEMANTICS"><code class="docutils literal notranslate"><span class="pre">USE_SEMANTICS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chat.generate_response"><code class="docutils literal notranslate"><span class="pre">generate_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chat.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate_semvec.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TinyLLM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-config">
+<span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-config" title="Link to this heading"></a></h1>
+<p>Configuration for TinyLLM</p>
+<p>This module contains all hyperparameters and configuration settings for the TinyLLM
+training pipeline, including model architecture, training parameters, semantic
+augmentation settings, and device configuration.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="config.BATCH_SIZE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">BATCH_SIZE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#config.BATCH_SIZE" title="Link to this definition"></a></dt>
+<dd><p>Number of sequences processed in parallel during training.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.BLOCK_SIZE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">BLOCK_SIZE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></span><a class="headerlink" href="#config.BLOCK_SIZE" title="Link to this definition"></a></dt>
+<dd><p>Maximum context length (number of tokens the model can attend to).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.COLLAPSE_MIN_LENGTH">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_MIN_LENGTH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></span><a class="headerlink" href="#config.COLLAPSE_MIN_LENGTH" title="Link to this definition"></a></dt>
+<dd><p>Minimum token count before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.COLLAPSE_REPEAT_RATIO">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_REPEAT_RATIO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.45</span></span><a class="headerlink" href="#config.COLLAPSE_REPEAT_RATIO" title="Link to this definition"></a></dt>
+<dd><p>Maximum repetition ratio before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.COLLAPSE_UNIQUE_RATIO">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_UNIQUE_RATIO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.3</span></span><a class="headerlink" href="#config.COLLAPSE_UNIQUE_RATIO" title="Link to this definition"></a></dt>
+<dd><p>Minimum unique token ratio before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.DEVICE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">DEVICE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda'</span></span><a class="headerlink" href="#config.DEVICE" title="Link to this definition"></a></dt>
+<dd><p>Computation device (‘cuda’ or ‘cpu’).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.EMBED_DIM">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">EMBED_DIM</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></span><a class="headerlink" href="#config.EMBED_DIM" title="Link to this definition"></a></dt>
+<dd><p>Dimensionality of token embeddings.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.ENABLE_ADAPTIVE_SEMANTICS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">ENABLE_ADAPTIVE_SEMANTICS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#config.ENABLE_ADAPTIVE_SEMANTICS" title="Link to this definition"></a></dt>
+<dd><p>Enable automatic semantic gate adjustment based on output quality.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.EVAL_INTERVAL">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">EVAL_INTERVAL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">500</span></span><a class="headerlink" href="#config.EVAL_INTERVAL" title="Link to this definition"></a></dt>
+<dd><p>Number of steps between evaluation runs.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.GEN_MAX_NEW">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">GEN_MAX_NEW</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">120</span></span><a class="headerlink" href="#config.GEN_MAX_NEW" title="Link to this definition"></a></dt>
+<dd><p>Default maximum number of new tokens to generate.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.GEN_TEMPERATURE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">GEN_TEMPERATURE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.9</span></span><a class="headerlink" href="#config.GEN_TEMPERATURE" title="Link to this definition"></a></dt>
+<dd><p>Default sampling temperature for text generation.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.GEN_TOP_K">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">GEN_TOP_K</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">40</span></span><a class="headerlink" href="#config.GEN_TOP_K" title="Link to this definition"></a></dt>
+<dd><p>Default top-k sampling parameter for generation.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.GRADIENT_CLIP">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">GRADIENT_CLIP</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#config.GRADIENT_CLIP" title="Link to this definition"></a></dt>
+<dd><p>Maximum norm for gradient clipping.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.INPUT_FILE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">INPUT_FILE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'input.txt'</span></span><a class="headerlink" href="#config.INPUT_FILE" title="Link to this definition"></a></dt>
+<dd><p>Path to the input text file for training.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.LEARNING_RATE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">LEARNING_RATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0003</span></span><a class="headerlink" href="#config.LEARNING_RATE" title="Link to this definition"></a></dt>
+<dd><p>Initial learning rate for AdamW optimizer.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.MAX_ITERS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">MAX_ITERS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50000</span></span><a class="headerlink" href="#config.MAX_ITERS" title="Link to this definition"></a></dt>
+<dd><p>Total number of training iterations.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.MIN_LR">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">MIN_LR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></span><a class="headerlink" href="#config.MIN_LR" title="Link to this definition"></a></dt>
+<dd><p>Minimum learning rate after cosine decay.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.NUM_HEADS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">NUM_HEADS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></span><a class="headerlink" href="#config.NUM_HEADS" title="Link to this definition"></a></dt>
+<dd><p>Number of attention heads per transformer layer.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.NUM_LAYERS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">NUM_LAYERS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#config.NUM_LAYERS" title="Link to this definition"></a></dt>
+<dd><p>Number of transformer encoder layers.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SAVE_EVERY">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SAVE_EVERY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000</span></span><a class="headerlink" href="#config.SAVE_EVERY" title="Link to this definition"></a></dt>
+<dd><p>Number of steps between checkpoint saves.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEMANTIC_DECAY">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_DECAY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.92</span></span><a class="headerlink" href="#config.SEMANTIC_DECAY" title="Link to this definition"></a></dt>
+<dd><p>Multiplier for gate reduction during semantic collapse.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEMANTIC_DIM">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_DIM</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">384</span></span><a class="headerlink" href="#config.SEMANTIC_DIM" title="Link to this definition"></a></dt>
+<dd><p>Dimensionality of semantic vectors from MiniLM.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEMANTIC_DROPOUT">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_DROPOUT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.15</span></span><a class="headerlink" href="#config.SEMANTIC_DROPOUT" title="Link to this definition"></a></dt>
+<dd><p>Dropout rate for semantic vectors during training.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEMANTIC_RECOVERY">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_RECOVERY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.01</span></span><a class="headerlink" href="#config.SEMANTIC_RECOVERY" title="Link to this definition"></a></dt>
+<dd><p>Multiplier for gate increase during healthy output.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_CURRENT">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_CURRENT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.7</span></span><a class="headerlink" href="#config.SEM_CURRENT" title="Link to this definition"></a></dt>
+<dd><p>Weight for current token’s semantic vector in context blending.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_GATE_INIT">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_GATE_INIT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.3</span></span><a class="headerlink" href="#config.SEM_GATE_INIT" title="Link to this definition"></a></dt>
+<dd><p>Initial value for the learnable semantic gate.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_GATE_MAX">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_GATE_MAX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.85</span></span><a class="headerlink" href="#config.SEM_GATE_MAX" title="Link to this definition"></a></dt>
+<dd><p>Maximum allowed semantic gate value.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_GATE_MIN">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_GATE_MIN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.15</span></span><a class="headerlink" href="#config.SEM_GATE_MIN" title="Link to this definition"></a></dt>
+<dd><p>Minimum allowed semantic gate value.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_NEXT">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_NEXT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.15</span></span><a class="headerlink" href="#config.SEM_NEXT" title="Link to this definition"></a></dt>
+<dd><p>Weight for next token’s semantic vector in context blending.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SEM_PREV">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SEM_PREV</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.15</span></span><a class="headerlink" href="#config.SEM_PREV" title="Link to this definition"></a></dt>
+<dd><p>Weight for previous token’s semantic vector in context blending.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.SHARD_SIZE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">SHARD_SIZE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000000</span></span><a class="headerlink" href="#config.SHARD_SIZE" title="Link to this definition"></a></dt>
+<dd><p>Number of tokens per shard file.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.USE_SEMANTICS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">USE_SEMANTICS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#config.USE_SEMANTICS" title="Link to this definition"></a></dt>
+<dd><p>Enable or disable semantic vector augmentation.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.VOCAB_SIZE">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">VOCAB_SIZE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#config.VOCAB_SIZE" title="Link to this definition"></a></dt>
+<dd><p>Vocabulary size from GPT-2 tokenizer. Set dynamically at runtime.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.WARMUP_STEPS">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">WARMUP_STEPS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">500</span></span><a class="headerlink" href="#config.WARMUP_STEPS" title="Link to this definition"></a></dt>
+<dd><p>Number of linear warmup steps before cosine decay.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="config.WEIGHT_DECAY">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">WEIGHT_DECAY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></span><a class="headerlink" href="#config.WEIGHT_DECAY" title="Link to this definition"></a></dt>
+<dd><p>Weight decay coefficient for AdamW optimizer.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config.set_vocab_size">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">set_vocab_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/config.html#set_vocab_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config.set_vocab_size" title="Link to this definition"></a></dt>
+<dd><p>Set the vocabulary size after tokenizer initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> – The vocabulary size from the tokenizer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="module-models.tinyllm_semantic">
+<span id="models-package"></span><h2>models package<a class="headerlink" href="#module-models.tinyllm_semantic" title="Link to this heading"></a></h2>
+<p>Semantic augmented TinyLLM model with per-layer gating.</p>
+<p>This module uses GPT-2 subword BPE tokenization (50,257 vocab) with semantic
+augmentation from MiniLM (384-dim vectors). Each token gets both:
+- Token embedding (syntax) from the GPT-2 token ID
+- Semantic vector (meaning) from precomputed MiniLM embeddings</p>
+<p>The model learns to balance syntax and semantics through per-layer gates.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.tinyllm_semantic.</span></span><span class="sig-name descname"><span class="pre">TinyLLMSemantic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vocab_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_semantics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>TinyLLM with semantic augmentation, context blending, and per-layer learnable gates.</p>
+<p>This model extends a standard transformer by adding semantic vectors from a
+precomputed encoder (MiniLM) to the token embeddings. It includes:
+- Context blending: local semantic context from neighboring tokens
+- Per-layer gates: each transformer layer learns its own semantic weight
+- Semantic dropout: prevents over-reliance on semantics during training</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.vocab_size">
+<span class="sig-name descname"><span class="pre">vocab_size</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.vocab_size" title="Link to this definition"></a></dt>
+<dd><p>Size of the token vocabulary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.use_semantics">
+<span class="sig-name descname"><span class="pre">use_semantics</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.use_semantics" title="Link to this definition"></a></dt>
+<dd><p>Whether to use semantic augmentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.block_size">
+<span class="sig-name descname"><span class="pre">block_size</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.block_size" title="Link to this definition"></a></dt>
+<dd><p>Maximum context length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.token_emb">
+<span class="sig-name descname"><span class="pre">token_emb</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.token_emb" title="Link to this definition"></a></dt>
+<dd><p>Token embedding layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.Embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.pos_emb">
+<span class="sig-name descname"><span class="pre">pos_emb</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.pos_emb" title="Link to this definition"></a></dt>
+<dd><p>Positional embedding layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#models.transformer.PositionalEmbedding" title="models.transformer.PositionalEmbedding">PositionalEmbedding</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.semantic_proj">
+<span class="sig-name descname"><span class="pre">semantic_proj</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_proj" title="Link to this definition"></a></dt>
+<dd><p>Projects semantic vectors to embed space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.semantic_gates">
+<span class="sig-name descname"><span class="pre">semantic_gates</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_gates" title="Link to this definition"></a></dt>
+<dd><p>Per-layer learnable gates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#models.semantic_gate.PerLayerSemanticGate" title="models.semantic_gate.PerLayerSemanticGate">PerLayerSemanticGate</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.blocks">
+<span class="sig-name descname"><span class="pre">blocks</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.blocks" title="Link to this definition"></a></dt>
+<dd><p>Transformer encoder blocks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.ModuleList</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.norm" title="Link to this definition"></a></dt>
+<dd><p>Final layer normalization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.LayerNorm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.head">
+<span class="sig-name descname"><span class="pre">head</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.head" title="Link to this definition"></a></dt>
+<dd><p>Output projection to vocabulary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.semantic_tensor">
+<span class="sig-name descname"><span class="pre">semantic_tensor</span></span><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_tensor" title="Link to this definition"></a></dt>
+<dd><p>Cached semantic tensor for generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vocab_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_semantics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the TinyLLMSemantic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vocab_size</strong> – Size of the token vocabulary.</p></li>
+<li><p><strong>use_semantics</strong> – Whether to enable semantic augmentation. Defaults to True.</p></li>
+<li><p><strong>block_size</strong> – Maximum context length. Defaults to 128.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.blend_context_semantics">
+<span class="sig-name descname"><span class="pre">blend_context_semantics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.blend_context_semantics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.blend_context_semantics" title="Link to this definition"></a></dt>
+<dd><p>Blend semantic vectors with neighboring tokens for local context.</p>
+<p>The blending uses configurable weights (SEM_CURRENT, SEM_PREV, SEM_NEXT)
+to incorporate semantic information from adjacent tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sem</strong> – Semantic tensor of shape (batch_size, seq_len, SEMANTIC_DIM).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Blended semantic tensor of the same shape.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantic_vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass through the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> – Input token indices of shape (batch_size, seq_len).</p></li>
+<li><p><strong>semantic_vectors</strong> – Semantic vectors for each token, shape (batch_size, seq_len, SEMANTIC_DIM).</p></li>
+<li><p><strong>targets</strong> – Target token indices for loss calculation, shape (batch_size, seq_len).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of (logits, loss) where logits has shape (batch_size, seq_len, vocab_size)
+and loss is the cross-entropy loss if targets provided, else None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_new</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.generate" title="Link to this definition"></a></dt>
+<dd><p>Generate text autoregressively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> – Starting token indices of shape (1, seq_len).</p></li>
+<li><p><strong>max_new</strong> – Maximum number of new tokens to generate.</p></li>
+<li><p><strong>temperature</strong> – Sampling temperature (higher = more random).</p></li>
+<li><p><strong>top_k</strong> – Top-k sampling parameter (filter to top k logits).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of generated token indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.get_gates">
+<span class="sig-name descname"><span class="pre">get_gates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.get_gates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.get_gates" title="Link to this definition"></a></dt>
+<dd><p>Return list of current per-layer gate values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of gate values for each layer (0-1 range).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.semantic_dropout">
+<span class="sig-name descname"><span class="pre">semantic_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.semantic_dropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.semantic_dropout" title="Link to this definition"></a></dt>
+<dd><p>Randomly disable semantic influence during training.</p>
+<p>This prevents the model from becoming over-reliant on semantic vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x_semantic</strong> – Projected semantic vectors.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The same tensor with random elements zeroed out during training.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.set_gate">
+<span class="sig-name descname"><span class="pre">set_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.set_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.set_gate" title="Link to this definition"></a></dt>
+<dd><p>Set the semantic gate for a specific layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer_idx</strong> – Index of the layer to modify.</p></li>
+<li><p><strong>value</strong> – New gate value (clamped to 0.01-0.99).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.tinyllm_semantic.TinyLLMSemantic.set_semantic_tensor">
+<span class="sig-name descname"><span class="pre">set_semantic_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/tinyllm_semantic.html#TinyLLMSemantic.set_semantic_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.tinyllm_semantic.TinyLLMSemantic.set_semantic_tensor" title="Link to this definition"></a></dt>
+<dd><p>Set the semantic tensor for generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tensor</strong> – Semantic tensor of shape (vocab_size, SEMANTIC_DIM).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-models.semantic_gate">Per-layer learnable semantic gates</p>
+<p>This module implements learnable gates that control the influence of semantic
+vectors at each transformer layer. The gates use sigmoid activation to stay
+in the (0,1) range.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.semantic_gate.</span></span><span class="sig-name descname"><span class="pre">PerLayerSemanticGate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Learnable gate per transformer layer for semantic influence.</p>
+<p>Each layer gets its own gate value that determines how much semantic
+information is mixed with the token embeddings. The gates use sigmoid
+activation to naturally stay in (0,1) range.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.num_layers">
+<span class="sig-name descname"><span class="pre">num_layers</span></span><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.num_layers" title="Link to this definition"></a></dt>
+<dd><p>Number of transformer layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.raw_gates">
+<span class="sig-name descname"><span class="pre">raw_gates</span></span><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.raw_gates" title="Link to this definition"></a></dt>
+<dd><p>Raw parameters before sigmoid activation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.Parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize per-layer semantic gates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_layers</strong> – Number of transformer layers.</p></li>
+<li><p><strong>init_gate</strong> – Initial gate value (0-1). Defaults to 0.3.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.forward" title="Link to this definition"></a></dt>
+<dd><p>Return gates as values in (0,1) range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor of gate values, one per layer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.get_all_gates">
+<span class="sig-name descname"><span class="pre">get_all_gates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.get_all_gates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.get_all_gates" title="Link to this definition"></a></dt>
+<dd><p>Get all gate values as a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of gate values for all layers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.get_gate">
+<span class="sig-name descname"><span class="pre">get_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.get_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.get_gate" title="Link to this definition"></a></dt>
+<dd><p>Get gate value for a specific layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layer_idx</strong> – Index of the layer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Gate value as a float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.set_all_gates">
+<span class="sig-name descname"><span class="pre">set_all_gates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.set_all_gates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.set_all_gates" title="Link to this definition"></a></dt>
+<dd><p>Set all gates from a list of values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> – List of gate values for each layer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.PerLayerSemanticGate.set_gate">
+<span class="sig-name descname"><span class="pre">set_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#PerLayerSemanticGate.set_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.PerLayerSemanticGate.set_gate" title="Link to this definition"></a></dt>
+<dd><p>Set gate for a specific layer to target value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer_idx</strong> – Index of the layer.</p></li>
+<li><p><strong>value</strong> – Target gate value (clamped to 0.01-0.99).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.semantic_gate.</span></span><span class="sig-name descname"><span class="pre">SemanticGate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/semantic_gate.html#SemanticGate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.SemanticGate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Single learnable gate for semantic influence (legacy).</p>
+<p>This is a simpler single-gate version maintained for backward compatibility.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate.raw">
+<span class="sig-name descname"><span class="pre">raw</span></span><a class="headerlink" href="#models.semantic_gate.SemanticGate.raw" title="Link to this definition"></a></dt>
+<dd><p>Raw parameter before sigmoid activation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nn.Parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/semantic_gate.html#SemanticGate.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.SemanticGate.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a single semantic gate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>init_gate</strong> – Initial gate value (0-1). Defaults to 0.3.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#SemanticGate.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.SemanticGate.forward" title="Link to this definition"></a></dt>
+<dd><p>Return the gate value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate.set_value">
+<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#SemanticGate.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.SemanticGate.set_value" title="Link to this definition"></a></dt>
+<dd><p>Set the gate to a target value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> – Target gate value (clamped to 0.01-0.99).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.semantic_gate.SemanticGate.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/models/semantic_gate.html#SemanticGate.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.semantic_gate.SemanticGate.value" title="Link to this definition"></a></dt>
+<dd><p>Get the current gate value as a float.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-models.transformer">Base transformer components</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.transformer.CausalMask">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.transformer.</span></span><span class="sig-name descname"><span class="pre">CausalMask</span></span><a class="reference internal" href="_modules/models/transformer.html#CausalMask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.CausalMask" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Causal attention mask generator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.transformer.CausalMask.create">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/transformer.html#CausalMask.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.CausalMask.create" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.transformer.PositionalEmbedding">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.transformer.</span></span><span class="sig-name descname"><span class="pre">PositionalEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/transformer.html#PositionalEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.PositionalEmbedding" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Learnable positional embeddings</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.transformer.PositionalEmbedding.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/transformer.html#PositionalEmbedding.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.PositionalEmbedding.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.transformer.TransformerBlock">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">models.transformer.</span></span><span class="sig-name descname"><span class="pre">TransformerBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embed_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/transformer.html#TransformerBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.TransformerBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Single transformer encoder block</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="models.transformer.TransformerBlock.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/transformer.html#TransformerBlock.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.transformer.TransformerBlock.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-training.adaptive_semantics">
+<span id="training-package"></span><h2>training package<a class="headerlink" href="#module-training.adaptive_semantics" title="Link to this heading"></a></h2>
+<p>Adaptive Semantic Regulation System with Arithmetic Compensation</p>
+<p>This module provides automatic detection of semantic collapse and dynamic
+adjustment of per-layer semantic gates. It includes arithmetic compensation
+to prevent penalizing mathematically dense code.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.ARITHMETIC_TOLERANCE_MULTIPLIER">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">ARITHMETIC_TOLERANCE_MULTIPLIER</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5</span></span><a class="headerlink" href="#training.adaptive_semantics.ARITHMETIC_TOLERANCE_MULTIPLIER" title="Link to this definition"></a></dt>
+<dd><p>Tolerance multiplier for mathematical code detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.COLLAPSE_MIN_LENGTH">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_MIN_LENGTH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></span><a class="headerlink" href="#training.adaptive_semantics.COLLAPSE_MIN_LENGTH" title="Link to this definition"></a></dt>
+<dd><p>Minimum token count before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.COLLAPSE_REPEAT_RATIO">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_REPEAT_RATIO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.45</span></span><a class="headerlink" href="#training.adaptive_semantics.COLLAPSE_REPEAT_RATIO" title="Link to this definition"></a></dt>
+<dd><p>Maximum repetition ratio before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.COLLAPSE_UNIQUE_RATIO">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">COLLAPSE_UNIQUE_RATIO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.3</span></span><a class="headerlink" href="#training.adaptive_semantics.COLLAPSE_UNIQUE_RATIO" title="Link to this definition"></a></dt>
+<dd><p>Minimum unique token ratio before collapse detection.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.MAX_GATE">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">MAX_GATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.85</span></span><a class="headerlink" href="#training.adaptive_semantics.MAX_GATE" title="Link to this definition"></a></dt>
+<dd><p>Maximum allowed semantic gate value.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.MIN_GATE">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">MIN_GATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.15</span></span><a class="headerlink" href="#training.adaptive_semantics.MIN_GATE" title="Link to this definition"></a></dt>
+<dd><p>Minimum allowed semantic gate value.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.SEMANTIC_DECAY">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_DECAY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.92</span></span><a class="headerlink" href="#training.adaptive_semantics.SEMANTIC_DECAY" title="Link to this definition"></a></dt>
+<dd><p>Multiplier for gate reduction during semantic collapse.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="training.adaptive_semantics.SEMANTIC_RECOVERY">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_RECOVERY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.01</span></span><a class="headerlink" href="#training.adaptive_semantics.SEMANTIC_RECOVERY" title="Link to this definition"></a></dt>
+<dd><p>Multiplier for gate increase during healthy output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.adaptive_semantics.analyze_output_quality">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">analyze_output_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/training/adaptive_semantics.html#analyze_output_quality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.adaptive_semantics.analyze_output_quality" title="Link to this definition"></a></dt>
+<dd><p>Detect semantic collapse or oversmoothing in generated output.</p>
+<p>Analyzes token diversity, repetition, length, and structural density.
+Mathematical code receives higher tolerance thresholds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tokens</strong> – List of generated token IDs.</p></li>
+<li><p><strong>tokenizer</strong> – GPT-2 tokenizer for decoding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>collapse (bool): Whether collapse was detected</p></li>
+<li><p>reasons (list): Reasons for collapse detection</p></li>
+<li><p>token_count (int): Number of tokens</p></li>
+<li><p>unique_ratio (float): Ratio of unique tokens</p></li>
+<li><p>repeat_ratio (float): Ratio of repeated tokens</p></li>
+<li><p>structure_density (float): Ratio of structural characters</p></li>
+<li><p>is_mathematical (bool): Whether code is mathematical</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.adaptive_semantics.get_gate_summary">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">get_gate_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/training/adaptive_semantics.html#get_gate_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.adaptive_semantics.get_gate_summary" title="Link to this definition"></a></dt>
+<dd><p>Get a formatted summary of per-layer gates for display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – The TinyLLMSemantic model instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted string with ASCII bar chart of gate values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.adaptive_semantics.is_mathematical_code">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">is_mathematical_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/training/adaptive_semantics.html#is_mathematical_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.adaptive_semantics.is_mathematical_code" title="Link to this definition"></a></dt>
+<dd><p>Detect if the generated code is mathematical/scientific in nature.</p>
+<p>Mathematical code typically has high operator density, numbers, and equations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – The generated text to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the text appears to be mathematical code, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.adaptive_semantics.regulate_semantics">
+<span class="sig-prename descclassname"><span class="pre">training.adaptive_semantics.</span></span><span class="sig-name descname"><span class="pre">regulate_semantics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/training/adaptive_semantics.html#regulate_semantics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.adaptive_semantics.regulate_semantics" title="Link to this definition"></a></dt>
+<dd><p>Dynamically regulate per-layer semantic influence based on output quality.</p>
+<p>Adjusts gate values downward when collapse is detected, and gradually
+recovers them during healthy output. Mathematical code receives gentler
+regulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The TinyLLMSemantic model instance.</p></li>
+<li><p><strong>quality_metrics</strong> – Dictionary from analyze_output_quality().</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of new gate values after regulation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-training.checkpoint">Checkpoint saving and loading</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="training.checkpoint.load_checkpoint">
+<span class="sig-prename descclassname"><span class="pre">training.checkpoint.</span></span><span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/training/checkpoint.html#load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.checkpoint.load_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Load training state if exists</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="training.checkpoint.save_checkpoint">
+<span class="sig-prename descclassname"><span class="pre">training.checkpoint.</span></span><span class="sig-name descname"><span class="pre">save_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_val_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pt'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/training/checkpoint.html#save_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.checkpoint.save_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Save full training state</p>
+</dd></dl>
+
+<p id="module-training.scheduler">Learning rate scheduler with warmup and cosine decay</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="training.scheduler.get_lr">
+<span class="sig-prename descclassname"><span class="pre">training.scheduler.</span></span><span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmup_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_lr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/training/scheduler.html#get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#training.scheduler.get_lr" title="Link to this definition"></a></dt>
+<dd><p>Cosine decay with warmup</p>
+</dd></dl>
+
+</section>
+<section id="module-data.shard_loader">
+<span id="data-package"></span><h2>data package<a class="headerlink" href="#module-data.shard_loader" title="Link to this heading"></a></h2>
+<p>Token shard management</p>
+<p>This module provides a dataset class that loads token shards randomly during
+training, enabling efficient memory usage and random access to the full dataset.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data.shard_loader.</span></span><span class="sig-name descname"><span class="pre">ShardDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/shard_loader.html#ShardDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.shard_loader.ShardDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Loads token shards randomly during training.</p>
+<p>Instead of loading the entire dataset into memory, this class loads one
+shard at a time and randomly rotates through shards, enabling efficient
+training on large datasets with limited memory.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.shards">
+<span class="sig-name descname"><span class="pre">shards</span></span><a class="headerlink" href="#data.shard_loader.ShardDataset.shards" title="Link to this definition"></a></dt>
+<dd><p>List of paths to shard files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.block_size">
+<span class="sig-name descname"><span class="pre">block_size</span></span><a class="headerlink" href="#data.shard_loader.ShardDataset.block_size" title="Link to this definition"></a></dt>
+<dd><p>Length of context window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.current_shard_idx">
+<span class="sig-name descname"><span class="pre">current_shard_idx</span></span><a class="headerlink" href="#data.shard_loader.ShardDataset.current_shard_idx" title="Link to this definition"></a></dt>
+<dd><p>Index of currently loaded shard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.tokens">
+<span class="sig-name descname"><span class="pre">tokens</span></span><a class="headerlink" href="#data.shard_loader.ShardDataset.tokens" title="Link to this definition"></a></dt>
+<dd><p>Currently loaded token tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/shard_loader.html#ShardDataset.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.shard_loader.ShardDataset.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the shard dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shards</strong> – List of paths to .pt shard files.</p></li>
+<li><p><strong>block_size</strong> – Length of context window for batches.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.get_batch">
+<span class="sig-name descname"><span class="pre">get_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/data/shard_loader.html#ShardDataset.get_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.shard_loader.ShardDataset.get_batch" title="Link to this definition"></a></dt>
+<dd><p>Get a random batch of token sequences from the current shard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – Number of sequences to return.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of (input_ids, target_ids) tensors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data.shard_loader.ShardDataset.load_random_shard">
+<span class="sig-name descname"><span class="pre">load_random_shard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/data/shard_loader.html#ShardDataset.load_random_shard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.shard_loader.ShardDataset.load_random_shard" title="Link to this definition"></a></dt>
+<dd><p>Load a random shard from disk.</p>
+<p>Skips reloading the currently loaded shard. Prints progress information.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-data.semantic_loader">.semvec file loader</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="data.semantic_loader.load_semantic_vectors">
+<span class="sig-prename descclassname"><span class="pre">data.semantic_loader.</span></span><span class="sig-name descname"><span class="pre">load_semantic_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semvec_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocab_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantic_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/semantic_loader.html#load_semantic_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.semantic_loader.load_semantic_vectors" title="Link to this definition"></a></dt>
+<dd><p>Load semantic vectors from .semvec shards.
+Returns tensor of shape (vocab_size, semantic_dim).</p>
+</dd></dl>
+
+<p id="module-data.tokenizer_utils">Tokenizer utilities using GPT-2 subword BPE tokenizer.</p>
+<p>This module provides a singleton wrapper around the GPT-2 tokenizer,
+which uses Byte-Pair Encoding (BPE) subword tokenization. The vocabulary
+size is 50,257 tokens, covering common words, subwords, and characters.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="data.tokenizer_utils.get_tokenizer">
+<span class="sig-prename descclassname"><span class="pre">data.tokenizer_utils.</span></span><span class="sig-name descname"><span class="pre">get_tokenizer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/data/tokenizer_utils.html#get_tokenizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data.tokenizer_utils.get_tokenizer" title="Link to this definition"></a></dt>
+<dd><p>Get the GPT-2 tokenizer singleton.</p>
+<p>The GPT-2 tokenizer uses subword BPE (Byte-Pair Encoding), which splits
+text into common subword units. For example:
+- “unhappiness” -&gt; [“un”, “happiness”]
+- “tokenization” -&gt; [“token”, “ization”]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>GPT-2 tokenizer with 50,257 vocab size.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>AutoTokenizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-generation.sampler">
+<span id="generation-package"></span><h2>generation package<a class="headerlink" href="#module-generation.sampler" title="Link to this heading"></a></h2>
+<p>Token sampling utilities</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="generation.sampler.generate">
+<span class="sig-prename descclassname"><span class="pre">generation.sampler.</span></span><span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/generation/sampler.html#generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#generation.sampler.generate" title="Link to this definition"></a></dt>
+<dd><p>Generate tokens using the model.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="generation.sampler.sample_top_k">
+<span class="sig-prename descclassname"><span class="pre">generation.sampler.</span></span><span class="sig-name descname"><span class="pre">sample_top_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/generation/sampler.html#sample_top_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#generation.sampler.sample_top_k" title="Link to this definition"></a></dt>
+<dd><p>Top-k sampling</p>
+</dd></dl>
+
+</section>
+<section id="module-train">
+<span id="scripts"></span><h2>Scripts<a class="headerlink" href="#module-train" title="Link to this heading"></a></h2>
+<p>TinyLLM - Main Training Script</p>
+<p>This script orchestrates the complete training pipeline for TinyLLM, including
+data loading, model initialization, training loop, checkpointing, and
+adaptive semantic regulation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="train.main">
+<span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/train.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.main" title="Link to this definition"></a></dt>
+<dd><p>Main training entry point.</p>
+</dd></dl>
+
+<p id="module-preprocess">TinyLLM - Preprocessing Script</p>
+<p>Converts input.txt to token shards and optionally generates semantic vectors
+using the MiniLM model. This script should be run before training.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="preprocess.SEMANTIC_DIM">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">SEMANTIC_DIM</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">384</span></span><a class="headerlink" href="#preprocess.SEMANTIC_DIM" title="Link to this definition"></a></dt>
+<dd><p>Dimensionality of semantic vectors from MiniLM.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="preprocess.SEMVEC_SHARDS_DIR">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">SEMVEC_SHARDS_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('semvec_shards')</span></span><a class="headerlink" href="#preprocess.SEMVEC_SHARDS_DIR" title="Link to this definition"></a></dt>
+<dd><p>Directory for semantic vector shard files.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="preprocess.TOKEN_SHARDS_DIR">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">TOKEN_SHARDS_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('token_shards')</span></span><a class="headerlink" href="#preprocess.TOKEN_SHARDS_DIR" title="Link to this definition"></a></dt>
+<dd><p>Directory for token shard files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocess.clean_text">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">clean_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/preprocess.html#clean_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocess.clean_text" title="Link to this definition"></a></dt>
+<dd><p>Clean text by replacing problematic UTF-8 artifacts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – Raw input text.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cleaned text with common encoding issues fixed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocess.create_semantic_vectors">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">create_semantic_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens_per_shard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/preprocess.html#create_semantic_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocess.create_semantic_vectors" title="Link to this definition"></a></dt>
+<dd><p>Create semantic vectors for unique tokens using MiniLM.</p>
+<p>This function collects all unique tokens from the token shards, then
+generates 384-dimensional semantic vectors using the MiniLM model.
+Results are saved as .semvec shard files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – Device to run the MiniLM model on (‘cuda’ or ‘cpu’).</p></li>
+<li><p><strong>max_tokens_per_shard</strong> – Maximum number of tokens per .semvec shard.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocess.create_token_shards">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">create_token_shards</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/preprocess.html#create_token_shards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocess.create_token_shards" title="Link to this definition"></a></dt>
+<dd><p>Convert input.txt to token shards (.pt files).</p>
+<p>Reads the input file in chunks, tokenizes with GPT-2, and saves
+shards of SHARD_SIZE tokens each. Skips if shards already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocess.main">
+<span class="sig-prename descclassname"><span class="pre">preprocess.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/preprocess.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocess.main" title="Link to this definition"></a></dt>
+<dd><p>Main preprocessing entry point.</p>
+</dd></dl>
+
+<p id="module-chat">TinyLLM - Chat Interface</p>
+<p>Loads your trained model and provides an interactive chat interface.
+Supports commands for adjusting temperature, max length, and semantic gates.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="chat.MODEL_PATH">
+<span class="sig-prename descclassname"><span class="pre">chat.</span></span><span class="sig-name descname"><span class="pre">MODEL_PATH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'final_model.pt'</span></span><a class="headerlink" href="#chat.MODEL_PATH" title="Link to this definition"></a></dt>
+<dd><p>Path to the trained model checkpoint.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="chat.USE_SEMANTICS">
+<span class="sig-prename descclassname"><span class="pre">chat.</span></span><span class="sig-name descname"><span class="pre">USE_SEMANTICS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#chat.USE_SEMANTICS" title="Link to this definition"></a></dt>
+<dd><p>Whether to use semantic augmentation during inference.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chat.generate_response">
+<span class="sig-prename descclassname"><span class="pre">chat.</span></span><span class="sig-name descname"><span class="pre">generate_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_new</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/chat.html#generate_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chat.generate_response" title="Link to this definition"></a></dt>
+<dd><p>Generate a response from the creature for a given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> – The user’s input text.</p></li>
+<li><p><strong>max_new</strong> – Maximum number of new tokens to generate.</p></li>
+<li><p><strong>temperature</strong> – Sampling temperature (higher = more creative).</p></li>
+<li><p><strong>top_k</strong> – Top-k sampling parameter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated response as a string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chat.main">
+<span class="sig-prename descclassname"><span class="pre">chat.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/chat.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chat.main" title="Link to this definition"></a></dt>
+<dd><p>Main chat interface entry point.</p>
+</dd></dl>
+
+<p id="module-generate_semvec">Generate semantic vectors from token shards</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="generate_semvec.main">
+<span class="sig-prename descclassname"><span class="pre">generate_semvec.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/generate_semvec.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#generate_semvec.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to TinyLLM’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Corpse Of The Betrayed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

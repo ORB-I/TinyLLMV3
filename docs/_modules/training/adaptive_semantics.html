@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>training.adaptive_semantics &mdash; TinyLLM 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TinyLLM
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TinyLLM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">training.adaptive_semantics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for training.adaptive_semantics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Adaptive Semantic Regulation System with Arithmetic Compensation</span>
+
+<span class="sd">This module provides automatic detection of semantic collapse and dynamic</span>
+<span class="sd">adjustment of per-layer semantic gates. It includes arithmetic compensation</span>
+<span class="sd">to prevent penalizing mathematically dense code.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># ============================================================</span>
+<span class="c1"># CONFIG</span>
+<span class="c1"># ============================================================</span>
+
+<span class="n">MAX_GATE</span> <span class="o">=</span> <span class="mf">0.85</span>
+<span class="sd">&quot;&quot;&quot;Maximum allowed semantic gate value.&quot;&quot;&quot;</span>
+
+<span class="n">MIN_GATE</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="sd">&quot;&quot;&quot;Minimum allowed semantic gate value.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_UNIQUE_RATIO</span> <span class="o">=</span> <span class="mf">0.30</span>
+<span class="sd">&quot;&quot;&quot;Minimum unique token ratio before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_REPEAT_RATIO</span> <span class="o">=</span> <span class="mf">0.45</span>
+<span class="sd">&quot;&quot;&quot;Maximum repetition ratio before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">COLLAPSE_MIN_LENGTH</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="sd">&quot;&quot;&quot;Minimum token count before collapse detection.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_DECAY</span> <span class="o">=</span> <span class="mf">0.92</span>
+<span class="sd">&quot;&quot;&quot;Multiplier for gate reduction during semantic collapse.&quot;&quot;&quot;</span>
+
+<span class="n">SEMANTIC_RECOVERY</span> <span class="o">=</span> <span class="mf">1.01</span>
+<span class="sd">&quot;&quot;&quot;Multiplier for gate increase during healthy output.&quot;&quot;&quot;</span>
+
+<span class="n">ARITHMETIC_TOLERANCE_MULTIPLIER</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="sd">&quot;&quot;&quot;Tolerance multiplier for mathematical code detection.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="is_mathematical_code">
+<a class="viewcode-back" href="../../modules.html#training.adaptive_semantics.is_mathematical_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_mathematical_code</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect if the generated code is mathematical/scientific in nature.</span>
+
+<span class="sd">    Mathematical code typically has high operator density, numbers, and equations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The generated text to analyze.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the text appears to be mathematical code, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">math_patterns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">r</span><span class="s2">&quot;[+\-*/%=]&quot;</span><span class="p">,</span>  <span class="c1"># operators</span>
+        <span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span>  <span class="c1"># numbers</span>
+        <span class="sa">r</span><span class="s2">&quot;\*\*&quot;</span><span class="p">,</span>  <span class="c1"># exponentiation</span>
+        <span class="sa">r</span><span class="s2">&quot;sqrt|log|exp|sin|cos|tan|pi|e\^&quot;</span><span class="p">,</span>  <span class="c1"># math functions</span>
+        <span class="sa">r</span><span class="s2">&quot;Matrix|Tensor|array&quot;</span><span class="p">,</span>  <span class="c1"># array/matrix operations</span>
+        <span class="sa">r</span><span class="s2">&quot;Float|Int|int|float&quot;</span><span class="p">,</span>  <span class="c1"># numeric types</span>
+        <span class="sa">r</span><span class="s2">&quot;==|!=|&lt;=|&gt;=&quot;</span><span class="p">,</span>  <span class="c1"># comparisons</span>
+        <span class="sa">r</span><span class="s2">&quot;lambda|x\^|y\^&quot;</span><span class="p">,</span>  <span class="c1"># variables and exponents</span>
+        <span class="sa">r</span><span class="s2">&quot;ctx\.|mpmath|sympy&quot;</span><span class="p">,</span>  <span class="c1"># math library calls</span>
+    <span class="p">]</span>
+
+    <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">math_patterns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
+            <span class="n">score</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="analyze_output_quality">
+<a class="viewcode-back" href="../../modules.html#training.adaptive_semantics.analyze_output_quality">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_output_quality</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect semantic collapse or oversmoothing in generated output.</span>
+
+<span class="sd">    Analyzes token diversity, repetition, length, and structural density.</span>
+<span class="sd">    Mathematical code receives higher tolerance thresholds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tokens: List of generated token IDs.</span>
+<span class="sd">        tokenizer: GPT-2 tokenizer for decoding.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary containing:</span>
+<span class="sd">            - collapse (bool): Whether collapse was detected</span>
+<span class="sd">            - reasons (list): Reasons for collapse detection</span>
+<span class="sd">            - token_count (int): Number of tokens</span>
+<span class="sd">            - unique_ratio (float): Ratio of unique tokens</span>
+<span class="sd">            - repeat_ratio (float): Ratio of repeated tokens</span>
+<span class="sd">            - structure_density (float): Ratio of structural characters</span>
+<span class="sd">            - is_mathematical (bool): Whether code is mathematical</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+
+    <span class="n">token_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+    <span class="n">unique_ratio</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">token_count</span><span class="p">)</span>
+
+    <span class="c1"># Repetition metric</span>
+    <span class="n">repeats</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">token_count</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tokens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">tokens</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="n">repeats</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">repeat_ratio</span> <span class="o">=</span> <span class="n">repeats</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">token_count</span><span class="p">)</span>
+
+    <span class="c1"># Structural characters</span>
+    <span class="n">structural_chars</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="n">structure_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">structural_chars</span><span class="p">)</span>
+    <span class="n">structure_density</span> <span class="o">=</span> <span class="n">structure_count</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+    <span class="c1"># Detect if this is mathematical code</span>
+    <span class="n">is_math</span> <span class="o">=</span> <span class="n">is_mathematical_code</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="c1"># Apply compensation factors for mathematical code</span>
+    <span class="k">if</span> <span class="n">is_math</span><span class="p">:</span>
+        <span class="n">unique_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_UNIQUE_RATIO</span> <span class="o">*</span> <span class="n">ARITHMETIC_TOLERANCE_MULTIPLIER</span>
+        <span class="n">repeat_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_REPEAT_RATIO</span> <span class="o">*</span> <span class="n">ARITHMETIC_TOLERANCE_MULTIPLIER</span>
+        <span class="n">length_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_MIN_LENGTH</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unique_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_UNIQUE_RATIO</span>
+        <span class="n">repeat_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_REPEAT_RATIO</span>
+        <span class="n">length_threshold</span> <span class="o">=</span> <span class="n">COLLAPSE_MIN_LENGTH</span>
+
+    <span class="c1"># Collapse detection with compensation</span>
+    <span class="n">collapse_detected</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reasons</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">token_count</span> <span class="o">&lt;</span> <span class="n">length_threshold</span><span class="p">:</span>
+        <span class="n">collapse_detected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;short_output&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">unique_ratio</span> <span class="o">&lt;</span> <span class="n">unique_threshold</span><span class="p">:</span>
+        <span class="n">collapse_detected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;low_diversity&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">repeat_ratio</span> <span class="o">&gt;</span> <span class="n">repeat_threshold</span><span class="p">:</span>
+        <span class="n">collapse_detected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;high_repetition&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;collapse&quot;</span><span class="p">:</span> <span class="n">collapse_detected</span><span class="p">,</span>
+        <span class="s2">&quot;reasons&quot;</span><span class="p">:</span> <span class="n">reasons</span><span class="p">,</span>
+        <span class="s2">&quot;token_count&quot;</span><span class="p">:</span> <span class="n">token_count</span><span class="p">,</span>
+        <span class="s2">&quot;unique_ratio&quot;</span><span class="p">:</span> <span class="n">unique_ratio</span><span class="p">,</span>
+        <span class="s2">&quot;repeat_ratio&quot;</span><span class="p">:</span> <span class="n">repeat_ratio</span><span class="p">,</span>
+        <span class="s2">&quot;structure_density&quot;</span><span class="p">:</span> <span class="n">structure_density</span><span class="p">,</span>
+        <span class="s2">&quot;is_mathematical&quot;</span><span class="p">:</span> <span class="n">is_math</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="regulate_semantics">
+<a class="viewcode-back" href="../../modules.html#training.adaptive_semantics.regulate_semantics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">regulate_semantics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">quality_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dynamically regulate per-layer semantic influence based on output quality.</span>
+
+<span class="sd">    Adjusts gate values downward when collapse is detected, and gradually</span>
+<span class="sd">    recovers them during healthy output. Mathematical code receives gentler</span>
+<span class="sd">    regulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: The TinyLLMSemantic model instance.</span>
+<span class="sd">        quality_metrics: Dictionary from analyze_output_quality().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of new gate values after regulation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get current gates (per-layer)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;get_gates&quot;</span><span class="p">):</span>
+        <span class="n">current_gates</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_gates</span><span class="p">()</span>
+        <span class="n">num_layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_gates</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Collapse response (but be gentler on mathematical code)</span>
+    <span class="k">if</span> <span class="n">quality_metrics</span><span class="p">[</span><span class="s2">&quot;collapse&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">quality_metrics</span><span class="p">[</span><span class="s2">&quot;is_mathematical&quot;</span><span class="p">]:</span>
+            <span class="n">decay</span> <span class="o">=</span> <span class="n">SEMANTIC_DECAY</span> <span class="o">*</span> <span class="mf">0.95</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️ Mathematical code - gentle regulation&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decay</span> <span class="o">=</span> <span class="n">SEMANTIC_DECAY</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️ Semantic saturation detected&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Reasons: </span><span class="si">{</span><span class="n">quality_metrics</span><span class="p">[</span><span class="s1">&#39;reasons&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Is mathematical: </span><span class="si">{</span><span class="n">quality_metrics</span><span class="p">[</span><span class="s1">&#39;is_mathematical&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">new_gates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">current_gates</span><span class="p">):</span>
+            <span class="n">new_g</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">decay</span><span class="p">,</span> <span class="n">MIN_GATE</span><span class="p">)</span>
+            <span class="n">new_gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_g</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">set_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">new_g</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Gates: </span><span class="si">{</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">g</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">current_gates</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;        → </span><span class="si">{</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">g</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">new_gates</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_gates</span>
+
+    <span class="c1"># Healthy output recovery (gradually increase gates)</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">g</span> <span class="o">&lt;</span> <span class="n">MAX_GATE</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">current_gates</span><span class="p">):</span>
+        <span class="n">recovery</span> <span class="o">=</span> <span class="n">SEMANTIC_RECOVERY</span>
+        <span class="n">target_gates</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)]</span>
+
+        <span class="n">new_gates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">current_gates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="n">target_gates</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">new_g</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">recovery</span><span class="p">,</span> <span class="n">target_gates</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_g</span> <span class="o">=</span> <span class="n">g</span>
+            <span class="n">new_gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_g</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_g</span> <span class="o">!=</span> <span class="n">g</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">set_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">new_g</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_gates</span>
+
+    <span class="k">return</span> <span class="n">current_gates</span></div>
+
+
+
+<div class="viewcode-block" id="get_gate_summary">
+<a class="viewcode-back" href="../../modules.html#training.adaptive_semantics.get_gate_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gate_summary</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a formatted summary of per-layer gates for display.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: The TinyLLMSemantic model instance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Formatted string with ASCII bar chart of gate values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;get_gates&quot;</span><span class="p">):</span>
+        <span class="n">gates</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_gates</span><span class="p">()</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gates</span><span class="p">):</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="s2">&quot;█&quot;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;░&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="mi">20</span><span class="p">))</span>
+            <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">g</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;No per-layer gates available&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Corpse Of The Betrayed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

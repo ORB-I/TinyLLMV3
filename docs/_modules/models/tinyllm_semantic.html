@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.tinyllm_semantic &mdash; TinyLLM 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TinyLLM
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TinyLLM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">models.tinyllm_semantic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for models.tinyllm_semantic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Semantic augmented TinyLLM model with per-layer gating</span>
+
+<span class="sd">This module implements the core TinyLLM model with semantic augmentation,</span>
+<span class="sd">context blending, and per-layer learnable gates. The model combines token</span>
+<span class="sd">embeddings with precomputed semantic vectors from MiniLM.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EMBED_DIM</span><span class="p">,</span>
+    <span class="n">NUM_HEADS</span><span class="p">,</span>
+    <span class="n">NUM_LAYERS</span><span class="p">,</span>
+    <span class="n">SEM_CURRENT</span><span class="p">,</span>
+    <span class="n">SEM_NEXT</span><span class="p">,</span>
+    <span class="n">SEM_PREV</span><span class="p">,</span>
+    <span class="n">SEMANTIC_DIM</span><span class="p">,</span>
+    <span class="n">SEMANTIC_DROPOUT</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models.semantic_gate</span><span class="w"> </span><span class="kn">import</span> <span class="n">PerLayerSemanticGate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CausalMask</span><span class="p">,</span> <span class="n">PositionalEmbedding</span><span class="p">,</span> <span class="n">TransformerBlock</span>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TinyLLMSemantic</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TinyLLM with semantic augmentation, context blending, and per-layer learnable gates.</span>
+
+<span class="sd">    This model extends a standard transformer by adding semantic vectors from a</span>
+<span class="sd">    precomputed encoder (MiniLM) to the token embeddings. It includes:</span>
+<span class="sd">    - Context blending: local semantic context from neighboring tokens</span>
+<span class="sd">    - Per-layer gates: each transformer layer learns its own semantic weight</span>
+<span class="sd">    - Semantic dropout: prevents over-reliance on semantics during training</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        vocab_size (int): Size of the token vocabulary.</span>
+<span class="sd">        use_semantics (bool): Whether to use semantic augmentation.</span>
+<span class="sd">        block_size (int): Maximum context length.</span>
+<span class="sd">        token_emb (nn.Embedding): Token embedding layer.</span>
+<span class="sd">        pos_emb (PositionalEmbedding): Positional embedding layer.</span>
+<span class="sd">        semantic_proj (nn.Linear): Projects semantic vectors to embed space.</span>
+<span class="sd">        semantic_gates (PerLayerSemanticGate): Per-layer learnable gates.</span>
+<span class="sd">        blocks (nn.ModuleList): Transformer encoder blocks.</span>
+<span class="sd">        norm (nn.LayerNorm): Final layer normalization.</span>
+<span class="sd">        head (nn.Linear): Output projection to vocabulary.</span>
+<span class="sd">        semantic_tensor (torch.Tensor): Cached semantic tensor for generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TinyLLMSemantic.__init__">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">use_semantics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">block_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the TinyLLMSemantic model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vocab_size: Size of the token vocabulary.</span>
+<span class="sd">            use_semantics: Whether to enable semantic augmentation. Defaults to True.</span>
+<span class="sd">            block_size: Maximum context length. Defaults to 128.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span> <span class="o">=</span> <span class="n">use_semantics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="n">block_size</span>
+
+        <span class="c1"># Token embedding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">EMBED_DIM</span><span class="p">)</span>
+
+        <span class="c1"># Positional embedding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_emb</span> <span class="o">=</span> <span class="n">PositionalEmbedding</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="n">EMBED_DIM</span><span class="p">)</span>
+
+        <span class="c1"># Semantic projection (if semantics enabled)</span>
+        <span class="k">if</span> <span class="n">use_semantics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">SEMANTIC_DIM</span><span class="p">,</span> <span class="n">EMBED_DIM</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_gates</span> <span class="o">=</span> <span class="n">PerLayerSemanticGate</span><span class="p">(</span><span class="n">NUM_LAYERS</span><span class="p">,</span> <span class="n">init_gate</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+        <span class="c1"># Transformer blocks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">TransformerBlock</span><span class="p">(</span><span class="n">EMBED_DIM</span><span class="p">,</span> <span class="n">NUM_HEADS</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_LAYERS</span><span class="p">)]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Output head</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">EMBED_DIM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">EMBED_DIM</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+
+        <span class="c1"># Cache for context blending</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_tensor</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.set_semantic_tensor">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.set_semantic_tensor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_semantic_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the semantic tensor for generation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tensor: Semantic tensor of shape (vocab_size, SEMANTIC_DIM).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_tensor</span> <span class="o">=</span> <span class="n">tensor</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.blend_context_semantics">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.blend_context_semantics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blend_context_semantics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sem</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Blend semantic vectors with neighboring tokens for local context.</span>
+
+<span class="sd">        The blending uses configurable weights (SEM_CURRENT, SEM_PREV, SEM_NEXT)</span>
+<span class="sd">        to incorporate semantic information from adjacent tokens.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sem: Semantic tensor of shape (batch_size, seq_len, SEMANTIC_DIM).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Blended semantic tensor of the same shape.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sem_prev</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">sem</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sem_next</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">sem</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sem_prev</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">sem_next</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">SEM_CURRENT</span> <span class="o">*</span> <span class="n">sem</span> <span class="o">+</span> <span class="n">SEM_PREV</span> <span class="o">*</span> <span class="n">sem_prev</span> <span class="o">+</span> <span class="n">SEM_NEXT</span> <span class="o">*</span> <span class="n">sem_next</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.semantic_dropout">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.semantic_dropout">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">semantic_dropout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_semantic</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Randomly disable semantic influence during training.</span>
+
+<span class="sd">        This prevents the model from becoming over-reliant on semantic vectors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_semantic: Projected semantic vectors.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The same tensor with random elements zeroed out during training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x_semantic</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">x_semantic</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">SEMANTIC_DROPOUT</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">x_semantic</span> <span class="o">*</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.get_gates">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.get_gates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_gates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return list of current per-layer gate values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of gate values for each layer (0-1 range).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_gates</span><span class="o">.</span><span class="n">get_all_gates</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">NUM_LAYERS</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.set_gate">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.set_gate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the semantic gate for a specific layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            layer_idx: Index of the layer to modify.</span>
+<span class="sd">            value: New gate value (clamped to 0.01-0.99).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_gates</span><span class="o">.</span><span class="n">set_gate</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.forward">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">idx</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">semantic_vectors</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass through the model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: Input token indices of shape (batch_size, seq_len).</span>
+<span class="sd">            semantic_vectors: Semantic vectors for each token, shape (batch_size, seq_len, SEMANTIC_DIM).</span>
+<span class="sd">            targets: Target token indices for loss calculation, shape (batch_size, seq_len).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (logits, loss) where logits has shape (batch_size, seq_len, vocab_size)</span>
+<span class="sd">            and loss is the cross-entropy loss if targets provided, else None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Token embedding</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_emb</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="c1"># Positional embedding</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_emb</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="c1"># Semantic augmentation (project once, apply per-layer gates)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span> <span class="ow">and</span> <span class="n">semantic_vectors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x_semantic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_proj</span><span class="p">(</span><span class="n">semantic_vectors</span><span class="p">)</span>
+            <span class="n">x_semantic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_dropout</span><span class="p">(</span><span class="n">x_semantic</span><span class="p">)</span>
+            <span class="n">gates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_gates</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_semantic</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">gates</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Causal mask</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">CausalMask</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">idx</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Transformer blocks with per-layer semantic gating</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_semantic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gate</span> <span class="o">=</span> <span class="n">gates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">gate</span> <span class="o">*</span> <span class="n">x_semantic</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">block</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># Output head</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Loss calculation</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+                <span class="n">logits</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">),</span> <span class="n">targets</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logits</span><span class="p">,</span> <span class="n">loss</span></div>
+
+
+<div class="viewcode-block" id="TinyLLMSemantic.generate">
+<a class="viewcode-back" href="../../modules.html#models.tinyllm_semantic.TinyLLMSemantic.generate">[docs]</a>
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">idx</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">max_new</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate text autoregressively.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: Starting token indices of shape (1, seq_len).</span>
+<span class="sd">            max_new: Maximum number of new tokens to generate.</span>
+<span class="sd">            temperature: Sampling temperature (higher = more random).</span>
+<span class="sd">            top_k: Top-k sampling parameter (filter to top k logits).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tensor of generated token indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_new</span><span class="p">):</span>
+            <span class="n">idx_cond</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="p">:]</span>
+
+            <span class="c1"># Get semantics if available</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_semantics</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sem_cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_tensor</span><span class="p">[</span><span class="n">idx_cond</span><span class="p">]</span>
+                <span class="n">sem_cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blend_context_semantics</span><span class="p">(</span><span class="n">sem_cond</span><span class="p">)</span>
+                <span class="n">logits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">idx_cond</span><span class="p">,</span> <span class="n">sem_cond</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">idx_cond</span><span class="p">)</span>
+
+            <span class="c1"># Sampling</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">temperature</span>
+            <span class="k">if</span> <span class="n">top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
+                <span class="n">logits</span><span class="p">[</span><span class="n">logits</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">)</span>
+
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">idx_next</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx_next</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">idx</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Corpse Of The Betrayed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
