@@ -14,15 +14,15 @@ import torch.nn as nn
 
 class PerLayerSemanticGate(nn.Module):
     """
-    Learnable gate per transformer layer for semantic influence.
+        Learnable gate per transformer layer for semantic influence.
 
-    Each layer gets its own gate value that determines how much semantic
-    information is mixed with the token embeddings. The gates use sigmoid
-    activation to naturally stay in (0,1) range.
-
-    Attributes:
-        num_layers (int): Number of transformer layers.
-        raw_gates (nn.Parameter): Raw parameters before sigmoid activation.
+        Each layer gets its own gate value that determines how much semantic
+        information is mixed with the token embeddings. The gates use sigmoid
+        activation to naturally stay in (0,1) range.
+    `
+        Attributes:
+            num_layers (int): Number of transformer layers.
+            raw_gates (nn.Parameter): Raw parameters before sigmoid activation.
     """
 
     def __init__(self, num_layers: int, init_gate: float = 0.3):
@@ -91,6 +91,8 @@ class PerLayerSemanticGate(nn.Module):
         Args:
             values: List of gate values for each layer.
         """
+        if len(values) != self.num_layers:
+            raise ValueError(f"Expected {self.num_layers} values, got {len(values)}")
         for i, v in enumerate(values[: self.num_layers]):
             self.set_gate(i, v)
 
